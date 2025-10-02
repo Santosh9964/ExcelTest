@@ -1,33 +1,40 @@
 const Exceljs = require('exceljs');
 
-async function excelTest() {
+async function WriteexcelTest(searchText,replaceText,filePath) {
 
- let output ={row:-1,column:-1};   
+ 
 
 const workbook = new Exceljs.Workbook();
-await workbook.xlsx.readFile("D://Excelutils//exceldownloadTest.xlsx")
-
+await workbook.xlsx.readFile(filePath);
 const worksheet = workbook.getWorksheet('Sheet1');
-worksheet.eachRow((row,rowNumber) =>
+const output = await readExcel(worksheet,searchText);
+const cell = worksheet.getCell(output.row,output.column);
+cell.value = replaceText;
+await workbook.xlsx.writeFile(filePath);
+
+}
+
+async function readExcel(worksheet,searchText)
+ {
+    let output ={row:-1,column:-1};  
+
+   worksheet.eachRow((row,rowNumber) =>
 {
    row.eachCell((cell,colNumber) =>
    {
-      if(cell.value==="Banana")
+      if(cell.value===searchText)
       {
         output.row = rowNumber;
         output.column = colNumber;
       }
 
    })
+   
 })
-
-const cell = worksheet.getCell(output.row,output.column);
-cell.value = "Republic";
-await workbook.xlsx.writeFile("D://Excelutils//exceldownloadTest.xlsx");
-
+return output;
 }
 
-excelTest();
+WriteexcelTest("Mango","Rabbit","D://Excelutils//exceldownloadTest.xlsx");
 
 
 
